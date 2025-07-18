@@ -1,4 +1,6 @@
 const productContainer = document.querySelector('.js-product-grid');
+const cartQuantity = document.querySelector('.js-cart-quantity');
+
 let productAccumulator = '';
 
 products.forEach((product) => {
@@ -63,13 +65,11 @@ document.querySelectorAll('.js-addCart').forEach((button, index) => {
     button.addEventListener('click', () => {
       let productExist;
 
-      for(let i = 0; i < carts.length; i++){
-        let cart = carts[i];
-
+      carts.forEach((cart) => {
         if(productId === cart.productId){
           productExist = cart;
         }
-      }
+      })
 
       if(productExist){
         productExist.Quantity += 1
@@ -79,6 +79,13 @@ document.querySelectorAll('.js-addCart').forEach((button, index) => {
         Quantity: 1
          })
       }
-      console.log(carts)
+      
+      let totalQuantity = 0;
+
+      carts.forEach((cart) => {
+       totalQuantity += cart.Quantity;
+      })
+      cartQuantity.innerHTML = totalQuantity;
     })
 })
+
