@@ -1,3 +1,5 @@
+import {carts} from "../data/carts.js";
+
 const productContainer = document.querySelector('.js-product-grid');
 const cartQuantity = document.querySelector('.js-cart-quantity');
 
@@ -24,7 +26,7 @@ products.forEach((product) => {
           </div>
 
           <div class="product-price">
-           ${(product.priceCents / 100).toFixed(2)}
+           $${(product.priceCents / 100).toFixed(2)}
           </div>
 
           <div class="product-quantity-container">
@@ -44,8 +46,8 @@ products.forEach((product) => {
 
           <div class="product-spacer"></div>
 
-          <div class="added-to-cart">
-            <img src="images/icons/checkmark.png">
+          <div class="added-to-cart js-added-cart-${product.id}">
+           <img src="images/icons/checkmark.png">
             Added
           </div>
 
@@ -56,31 +58,42 @@ products.forEach((product) => {
   `
 })  
 productContainer.innerHTML = productAccumulator; 
-let carts = [];
+
 
 
 document.querySelectorAll('.js-addCart').forEach((button, index) => {
-  const productId = button.dataset.productId;
+  const { productId } = button.dataset;
+  const addedQuantity = document.querySelector(`.js-added-cart-${productId}`);
   const selectedQuantity = document.querySelector(`.js-quantity-selector-${productId}`);
-
+  
+  let clearCart;
     button.addEventListener('click', () => {
       let productExist;
+      addedQuantity.classList.add('added-opacity');
+      clearTimeout(clearCart);
+
+    clearCart =  setTimeout(() => { 
+            addedQuantity.classList.remove('added-opacity');
+      }, 2000)
   
+
+
       carts.forEach((cart) => {
         if(productId === cart.productId){
           productExist = cart;
         }
       })
+      const Quantity = Number(selectedQuantity.value)
 
       if(productExist){
-        productExist.Quantity += Number(selectedQuantity.value)
+        productExist.Quantity += Quantity
       } else{
         carts.push({
         productId,
-        Quantity: Number(selectedQuantity.value)
+        Quantity
          })
       }
-      console.log(carts)
+      console.log(carts);
       
       let totalQuantity = 0;
 

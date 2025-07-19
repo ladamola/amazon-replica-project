@@ -656,5 +656,37 @@ const products = [
       "apparel",
       "mens"
     ]
+  },
+  {
+    id: "id1-5323-403f-b7cf-57fde044a955",
+    image: "images/products/umbrella.jpg",
+    name: "Umbrella Louis Vuitton",
+    rating: {
+      stars: 2.5,
+      count: 4000
+    },
+    priceCents: 4400,
+    keywords: [
+      "umbrella",
+      "rain",
+      "cold",
+      "wet"
+    ]
+  },
+  {
+    id: "id2-5323-403f-b7cf-57fde044a955",
+    image: "images/products/backpack.jpg",
+    name: "Backpack for Young Kids",
+    rating: {
+      stars: 5,
+      count: 2023
+    },
+    priceCents: 1020,
+    keywords: [
+      "backpack",
+      "books",
+      "school",
+      "loads"
+    ]
   }
 ];
