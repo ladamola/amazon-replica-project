@@ -1,7 +1,10 @@
-import {carts} from "../data/carts.js";
+import {carts, cartUpdate} from "../data/carts.js";
+import { products } from "../data/products.js";
 
 const productContainer = document.querySelector('.js-product-grid');
 const cartQuantity = document.querySelector('.js-cart-quantity');
+
+
 
 let productAccumulator = '';
 
@@ -59,48 +62,31 @@ products.forEach((product) => {
 })  
 productContainer.innerHTML = productAccumulator; 
 
+function updatecartQuantity(){
+  let totalQuantity = 0;
+    carts.forEach((cart) => {
+      totalQuantity += cart.Quantity;
+    })
+    cartQuantity.innerHTML = totalQuantity;
+}
 
+function addedUpdate(addedQuantity){
+  let clearCart;
+  clearTimeout(clearCart);
+  clearCart =  setTimeout(() => { 
+    addedQuantity.classList.remove('added-opacity');
+  } , 2000)
+}
 
 document.querySelectorAll('.js-addCart').forEach((button, index) => {
   const { productId } = button.dataset;
   const addedQuantity = document.querySelector(`.js-added-cart-${productId}`);
-  const selectedQuantity = document.querySelector(`.js-quantity-selector-${productId}`);
-  
-  let clearCart;
-    button.addEventListener('click', () => {
-      let productExist;
-      addedQuantity.classList.add('added-opacity');
-      clearTimeout(clearCart);
 
-    clearCart =  setTimeout(() => { 
-            addedQuantity.classList.remove('added-opacity');
-      }, 2000)
-  
-
-
-      carts.forEach((cart) => {
-        if(productId === cart.productId){
-          productExist = cart;
-        }
-      })
-      const Quantity = Number(selectedQuantity.value)
-
-      if(productExist){
-        productExist.Quantity += Quantity
-      } else{
-        carts.push({
-        productId,
-        Quantity
-         })
-      }
-      console.log(carts);
-      
-      let totalQuantity = 0;
-
-      carts.forEach((cart) => {
-       totalQuantity += cart.Quantity;
-      })
-      cartQuantity.innerHTML = totalQuantity;
-    })
+  button.addEventListener('click', () => {
+  cartUpdate(productId);
+  updatecartQuantity()
+  addedQuantity.classList.add('added-opacity');
+  addedUpdate(addedQuantity)
+})
 })
 
