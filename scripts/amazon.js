@@ -4,10 +4,7 @@ import { products } from "../data/products.js";
 const productContainer = document.querySelector('.js-product-grid');
 const cartQuantity = document.querySelector('.js-cart-quantity');
 
-
-
 let productAccumulator = '';
-
 products.forEach((product) => {
   productAccumulator += `
      <div class="product-container">
