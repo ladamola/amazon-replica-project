@@ -1,32 +1,29 @@
-import { carts } from "../data/carts.js";
+import { carts, removeCart, removeCartAlternative } from "../data/carts.js";
 import { products } from "../data/products.js"
 
 const checkoutOrder = document.querySelector('.js-checkout-grid');
 
+
 let similarProduct;
-let cartCheckout = ''
+
+
+
+
+  let cartCheckout = '';
 carts.forEach((cart) => {
-  
+
   products.forEach((product) => {
-    if(product.id === cart.id){
+    if(product.id === cart.productId){
       similarProduct = product
     }
   })
 
-  document.querySelectorAll('.js-delivery-button').forEach((deliveryBtn) => {
-    deliveryBtn.addEventListener('click', () => {
-      console.log('Hi')
-    })
-  })
-
-
   cartCheckout += ` 
-    <div class="order-summary">
+    <div class="order-summary js-order-${similarProduct.id}">
           <div class="cart-item-container">
             <div class="delivery-date">
               Delivery date: Tuesday, June 21
             </div>
-
             <div class="cart-item-details-grid">
               <img class="product-image"
                 src="${similarProduct.image}">
@@ -42,10 +39,10 @@ carts.forEach((cart) => {
                   <span>
                     Quantity: <span class="quantity-label">${cart.Quantity}</span>
                   </span>
-                  <span class="update-quantity-link link-primary">
+                  <span class="update-quantity-link link-primary" >
                     Update
                   </span>
-                  <span class="delete-quantity-link link-primary">
+                  <span class= "delete-quantity-link link-primary js-deleteBtn" data-delete-button = "${similarProduct.id}">
                     Delete
                   </span>
                 </div>
@@ -99,6 +96,27 @@ carts.forEach((cart) => {
           </div>
       </div>
       `
-})
+      })
+      checkoutOrder.innerHTML = cartCheckout;
 
-checkoutOrder.innerHTML = cartCheckout
+//     let newCart = []
+
+// document.querySelectorAll('.js-deleteBtn').forEach((deleteBtn) => {
+//   const {deleteButton} = deleteBtn.dataset;
+//   const order = document.querySelector(`.js-order-${deleteButton}`);
+  
+//   deleteBtn.addEventListener('click', () =>{
+//     removeCart(deleteButton)
+//     order.remove()
+//   })
+// })
+
+document.querySelectorAll('.js-deleteBtn').forEach((deleteBtn) => {
+  const {deleteButton} = deleteBtn.dataset
+  const order = document.querySelector(`.js-order-${deleteButton}`); 
+
+  deleteBtn.addEventListener('click', () => {
+    removeCartAlternative(deleteButton);
+    order.remove();
+  })
+})
