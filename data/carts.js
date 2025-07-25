@@ -1,31 +1,29 @@
-export let carts = [{
-    productId: "e43638ce-6aa0-4b85-b27f-e1d07eb678c6",
-    Quantity: 1
-},
-{
-    productId: "15b6fc6f-327a-4ec4-896f-486349e85a3d",
-    Quantity: 2
-}
-];
+export let carts = JSON.parse(localStorage.getItem('cartStorage')) || [];
 
+export function cartMemory(){
+  localStorage.setItem('cartStorage', JSON.stringify(carts));
+}
 export function cartUpdate(productId){
-  const selectedQuantity = document.querySelector(`.js-quantity-selector-${productId}`);
-  let productExist;
-    carts.forEach((cart) => {
+const selectedQuantity = document.querySelector(`.js-quantity-selector-${productId}`);
+let productExist;
+
+let Quantity = Number(selectedQuantity.value);
+
+carts.forEach((cart) => {
       if(productId === cart.productId){
           productExist = cart;
         }
+})
+    if(!productExist){
+      carts.push({
+        productId,
+        Quantity
       })
-  const Quantity = Number(selectedQuantity.value)
-
-    if(productExist){
-      productExist.Quantity += Quantity
     } else{
-    carts.push({
-      productId,
-      Quantity
-    })
-    }
+      productExist.Quantity += Quantity;
+    }    
+    cartMemory();
+    console.log(carts)
 }
 
 export function removeCart(deleteButton){
@@ -33,14 +31,24 @@ export function removeCart(deleteButton){
 
  carts.forEach((cart) => {
       if(cart.productId !== deleteButton){
-        newCart.push(cart)
+        newCart.push(cart); 
       }
     })
     carts = newCart
-    console.log(carts) 
+    
   }
 
 export function removeCartAlternative(deleteButton){
-  const newCart = carts.findIndex(cartItem => cartItem.productId === deleteButton)
-  carts.splice(newCart, 1);
+  const newCartId = carts.findIndex(cartItem => cartItem.productId === deleteButton);
+  carts.splice(newCartId, 1);
+  localStorage.removeItem('cartStorage');
+  cartMemory();
+}
+
+export function calculateCartQuantity(){
+  let totalQuantity = Number('');
+  carts.forEach((cart) => {
+  totalQuantity += cart.Quantity;
+  })
+  return totalQuantity;
 }

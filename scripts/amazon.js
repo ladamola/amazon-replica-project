@@ -1,4 +1,4 @@
-import {carts, cartUpdate} from "../data/carts.js";
+import {carts, cartUpdate, calculateCartQuantity} from "../data/carts.js";
 import { products } from "../data/products.js";
 
 const productContainer = document.querySelector('.js-product-grid');
@@ -10,7 +10,7 @@ products.forEach((product) => {
      <div class="product-container">
           <div class="product-image-container">
             <img class="product-image"
-              src= ${product.image }>
+              src= ${product.image}>
           </div>
 
           <div class="product-name limit-text-to-2-lines">
@@ -59,12 +59,9 @@ products.forEach((product) => {
 })  
 productContainer.innerHTML = productAccumulator; 
 
+updatecartQuantity();
 function updatecartQuantity(){
-  let totalQuantity = 0;
-    carts.forEach((cart) => {
-      totalQuantity += cart.Quantity;
-    })
-    cartQuantity.innerHTML = totalQuantity;
+  cartQuantity.innerHTML = calculateCartQuantity();
 }
 
 function addedUpdate(addedQuantity){
@@ -81,9 +78,9 @@ document.querySelectorAll('.js-addCart').forEach((button, index) => {
 
   button.addEventListener('click', () => {
   cartUpdate(productId);
-  updatecartQuantity()
   addedQuantity.classList.add('added-opacity');
   addedUpdate(addedQuantity)
+  updatecartQuantity();
 })
 })
 

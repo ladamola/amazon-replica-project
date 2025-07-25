@@ -1,17 +1,13 @@
-import { carts, removeCart, removeCartAlternative } from "../data/carts.js";
+import { carts, removeCart, removeCartAlternative, cartMemory, calculateCartQuantity } from "../data/carts.js";
 import { products } from "../data/products.js"
 
 const checkoutOrder = document.querySelector('.js-checkout-grid');
-
+const checkoutHeader = document.querySelector('.js-return-to-home-link');
 
 let similarProduct;
 
-
-
-
-  let cartCheckout = '';
+let cartCheckout = '';
 carts.forEach((cart) => {
-
   products.forEach((product) => {
     if(product.id === cart.productId){
       similarProduct = product
@@ -98,7 +94,7 @@ carts.forEach((cart) => {
       `
       })
       checkoutOrder.innerHTML = cartCheckout;
-
+      
 //     let newCart = []
 
 // document.querySelectorAll('.js-deleteBtn').forEach((deleteBtn) => {
@@ -118,5 +114,12 @@ document.querySelectorAll('.js-deleteBtn').forEach((deleteBtn) => {
   deleteBtn.addEventListener('click', () => {
     removeCartAlternative(deleteButton);
     order.remove();
+    totalCartQuantity()
   })
 })
+
+totalCartQuantity();
+function totalCartQuantity(){
+
+   checkoutHeader.innerHTML = `${calculateCartQuantity()} items`;
+}
