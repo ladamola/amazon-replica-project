@@ -1,4 +1,4 @@
-import { carts, removeCart, removeCartAlternative, cartMemory, calculateCartQuantity } from "../data/carts.js";
+import { carts, cartUpdate, removeCart, removeCartAlternative, cartMemory, calculateCartQuantity, updateQuantity } from "../data/carts.js";
 import { products } from "../data/products.js"
 
 const checkoutOrder = document.querySelector('.js-checkout-grid');
@@ -16,7 +16,7 @@ carts.forEach((cart) => {
 
   cartCheckout += ` 
     <div class="order-summary js-order-${similarProduct.id}">
-          <div class="cart-item-container">
+          <div class="cart-item-container-${similarProduct.id}">
             <div class="delivery-date">
               Delivery date: Tuesday, June 21
             </div>
@@ -33,10 +33,14 @@ carts.forEach((cart) => {
                 </div>
                 <div class="product-quantity">
                   <span>
-                    Quantity: <span class="quantity-label">${cart.Quantity}</span>
+                    Quantity: <span class="quantity-label js-quantity-label">${cart.Quantity}</span>
                   </span>
-                  <span class="update-quantity-link link-primary" >
+                  <span class="update-quantity-link link-primary js-update-quantity-link" data-update-id = "${similarProduct.id}">
                     Update
+                  </span>
+                  <input class="quantity-input-${similarProduct.id} cart-quantity-input"/>
+                  <span class="save-quantity-link link-primary js-save-quantity-link" data-save-id= "${similarProduct.id}" > 
+                    Save
                   </span>
                   <span class= "delete-quantity-link link-primary js-deleteBtn" data-delete-button = "${similarProduct.id}">
                     Delete
@@ -107,6 +111,7 @@ carts.forEach((cart) => {
 //   })
 // })
 
+//Delete Button
 document.querySelectorAll('.js-deleteBtn').forEach((deleteBtn) => {
   const {deleteButton} = deleteBtn.dataset
   const order = document.querySelector(`.js-order-${deleteButton}`); 
@@ -114,12 +119,63 @@ document.querySelectorAll('.js-deleteBtn').forEach((deleteBtn) => {
   deleteBtn.addEventListener('click', () => {
     removeCartAlternative(deleteButton);
     order.remove();
-    totalCartQuantity()
+    totalCartQuantity();
   })
 })
 
 totalCartQuantity();
 function totalCartQuantity(){
-
-   checkoutHeader.innerHTML = `${calculateCartQuantity()} items`;
+  carts.forEach((cart) => {
+    if(!cart.Quantity){
+      checkoutHeader.innerHTML = ' '
+    }else {
+        checkoutHeader.innerHTML = `${calculateCartQuantity()} items`
+    }
+  })
 }
+
+//Update Button
+document.querySelectorAll('.js-update-quantity-link').forEach((updateBtn) => {
+  const { updateId } = updateBtn.dataset;
+  const cartContainer = document.querySelector(`.cart-item-container-${updateId}`);
+
+  updateBtn.addEventListener('click', () => {
+    cartContainer.classList.add('is-editing-quantity')
+    console.log(carts)
+  })
+})
+
+//Save Button
+document.querySelectorAll('.js-save-quantity-link').forEach((saveBtn) => {
+    const { saveId } = saveBtn.dataset;
+    const cartContainer = document.querySelector(`.cart-item-container-${saveId}`);
+    const newQuantityInput = document.querySelector(`.quantity-input-${saveId}`);
+  
+    //Click Function
+    saveBtn.addEventListener('click', () => {
+      cartContainer.classList.remove('is-editing-quantity');
+      const newQuantity = Number(newQuantityInput.value);
+      updateQuantity(saveId, newQuantity)
+      if(newQuantity >= 0 && newQuantity <= 1000){
+        document.querySelector('.js-quantity-label')
+      .innerHTML = newQuantity;
+      }
+      totalCartQuantity();
+    })
+
+    //Keyboard Function
+    newQuantityInput.addEventListener('keydown', (event) => {
+      if(event.key === 'Enter' && saveId){
+      cartContainer.classList.remove('is-editing-quantity');
+      const newQuantity = Number(newQuantityInput.value);
+      updateQuantity(saveId, newQuantity)
+      if(newQuantity >= 0 && newQuantity <= 1000){
+      document.querySelector('.js-quantity-label')
+        .innerHTML = newQuantity;
+      }
+      console.log(newQuantity)
+      }
+      totalCartQuantity()
+    })
+})
+ 

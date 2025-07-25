@@ -61,7 +61,13 @@ productContainer.innerHTML = productAccumulator;
 
 updatecartQuantity();
 function updatecartQuantity(){
-  cartQuantity.innerHTML = calculateCartQuantity();
+  carts.forEach((cart) => {
+    if(!cart.Quantity){
+      cartQuantity.innerHTML = ' '
+    }else{
+      cartQuantity.innerHTML = calculateCartQuantity();
+    }
+  })
 }
 
 function addedUpdate(addedQuantity){

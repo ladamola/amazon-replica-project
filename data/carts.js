@@ -52,3 +52,14 @@ export function calculateCartQuantity(){
   })
   return totalQuantity;
 }
+
+export function updateQuantity(saveId, newQuantity){
+    carts.forEach((cart) => {
+      if(cart.productId === saveId){
+        if(newQuantity >= 0 && newQuantity <= 1000){
+          return cart.Quantity = newQuantity;
+        }
+      }
+    })
+    cartMemory();
+}
