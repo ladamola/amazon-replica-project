@@ -1,24 +1,41 @@
-import { carts, cartUpdate, removeCart, removeCartAlternative, cartMemory, calculateCartQuantity, updateQuantity } from "../data/carts.js";
+import { carts, cartUpdate, removeCart, removeCartAlternative, cartMemory, calculateCartQuantity, updateQuantity, updateCartDelivery} from "../data/carts.js";
 import { products } from "../data/products.js"
+import dayjs from "https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js";
+import { deliveryDates } from "../data/deliveryDates.js";
 
-const checkoutOrder = document.querySelector('.js-checkout-grid');
-const checkoutHeader = document.querySelector('.js-return-to-home-link');
 
-let similarProduct;
 
-let cartCheckout = '';
-carts.forEach((cart) => {
+  const checkoutOrder = document.querySelector('.js-checkout-grid');
+  const checkoutHeader = document.querySelector('.js-return-to-home-link');
+  
+
+  let trueSelected = '';
+  let currentDate = '';
+
+  function checkout() {
+    let cartCheckout = ''; // The html as a whole 
+
+    carts.forEach((cart) => {
+    let similarProduct; // Last Saved Item on the Cart  
+
   products.forEach((product) => {
     if(product.id === cart.productId){
       similarProduct = product
     }
   })
 
-  cartCheckout += ` 
-    <div class="order-summary js-order-${similarProduct.id}">
+    deliveryDates.forEach((deliveryDate) => {
+          if(cart.deliveryDateId === deliveryDate.id){
+            currentDate = dayjs().add(deliveryDate.deliveryDays, 'days').format('dddd MMMM D');
+            console.log(similarProduct);
+          }
+      })
+
+      cartCheckout += ` 
+      <div class="order-summary js-order-${similarProduct.id}">
           <div class="cart-item-container-${similarProduct.id}">
-            <div class="delivery-date">
-              Delivery date: Tuesday, June 21
+            <div class="delivery-date js-delivery-date">
+              Delivery date: ${currentDate}
             </div>
             <div class="cart-item-details-grid">
               <img class="product-image"
@@ -47,57 +64,20 @@ carts.forEach((cart) => {
                   </span>
                 </div>
               </div>
-
-              <div class="delivery-options js-delivery-button" >
-                <div class="delivery-options-title">
-                  Choose a delivery option:
-                </div>
-                <div class="delivery-option js-delivery-button">
-                  <input type="radio" checked
-                    class="delivery-option-input"
-                    name="delivery-option-${similarProduct.id}">
-                  <div>
-                    <div class="delivery-option-date">
-                      Tuesday, June 21
-                    </div>
-                    <div class="delivery-option-price">
-                      FREE Shipping
-                    </div>
+              <div class="delivery-options" >
+                 <div class="delivery-options-title">
+                    Choose a delivery option:
                   </div>
-                </div>
-                <div class="delivery-option">
-                  <input type="radio"
-                    class="delivery-option-input"
-                    name="delivery-option-${similarProduct.id}">
-                  <div>
-                    <div class="delivery-option-date">
-                      Wednesday, June 15
-                    </div>
-                    <div class="delivery-option-price">
-                      $4.99 - Shipping
-                    </div>
-                  </div>
-                </div>
-                <div class="delivery-option">
-                  <input type="radio"
-                    class="delivery-option-input"
-                    name="delivery-option-${similarProduct.id}">
-                  <div>
-                    <div class="delivery-option-date">
-                      Monday, June 13
-                    </div>
-                    <div class="delivery-option-price">
-                      $9.99 - Shipping
-                    </div>
-                  </div>
-                </div>
+                ${deliveryDays(cart, similarProduct)}
               </div>
             </div>
           </div>
       </div>
-      `
+      `  
       })
-      checkoutOrder.innerHTML = cartCheckout;
+
+    checkoutOrder.innerHTML = cartCheckout;
+
       
 //     let newCart = []
 
@@ -110,6 +90,40 @@ carts.forEach((cart) => {
 //     order.remove()
 //   })
 // })
+
+//Generate Delivery Days HTML
+function deliveryDays(cart, similarProduct){
+  let dateHTML = '';
+  
+  deliveryDates.forEach((date) => {
+      const today = dayjs();
+      const deliveryDate = today.add(date.deliveryDays, 'days').format('dddd MMMM D');
+      const deliveryPrice = date.priceCents;
+      const actualDeliveryPrice = date.priceCents === 0 ? 'FREE' : `$${date.priceCents / 100} -`;
+      const selectedDelivery = cart.deliveryDateId === date.id;
+      
+        dateHTML += `
+                  <div class="delivery-option js-delivery-button"
+                  data-cart-id = ${cart.productId} data-delivery-id = ${date.id}>
+                    <input type="radio" 
+                      ${selectedDelivery ? 'checked' : ''}
+                      class="delivery-option-input"
+                      name="delivery-option-${similarProduct.id}">
+                    <div>
+                      <div class="delivery-option-date">
+                      ${deliveryDate}
+                      </div>
+                      <div class="delivery-option-price">
+                        ${actualDeliveryPrice} Shipping
+                      </div>
+                    </div>
+                  </div>
+                `
+             
+  })
+
+  return dateHTML;
+}
 
 //Delete Button
 document.querySelectorAll('.js-deleteBtn').forEach((deleteBtn) => {
@@ -179,3 +193,17 @@ document.querySelectorAll('.js-save-quantity-link').forEach((saveBtn) => {
     })
 })
  
+
+
+
+document.querySelectorAll('.js-delivery-button').forEach((deliveryBtn) => {
+  const { cartId, deliveryId } = deliveryBtn.dataset;
+  deliveryBtn.addEventListener('click', () => {
+    updateCartDelivery(cartId, deliveryId);
+    checkout();
+    cartMemory();
+  })
+})
+}
+  
+checkout()

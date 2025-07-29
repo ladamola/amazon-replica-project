@@ -17,7 +17,8 @@ carts.forEach((cart) => {
     if(!productExist){
       carts.push({
         productId,
-        Quantity
+        Quantity,
+        deliveryDateId: '2'
       })
     } else{
       productExist.Quantity += Quantity;
@@ -62,4 +63,13 @@ export function updateQuantity(saveId, newQuantity){
       }
     })
     cartMemory();
+}
+
+export function updateCartDelivery (cartId, deliveryId, deliveryDateTitle){
+   carts.forEach((cart) => {
+    if(cart.productId === cartId){
+        cart.deliveryDateId = deliveryId;
+        return cart.deliveryDateId;
+    }
+  })
 }
