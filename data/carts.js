@@ -1,8 +1,12 @@
+import { calculatePriceCents } from '../scripts/utils/money.js';
+
 export let carts = JSON.parse(localStorage.getItem('cartStorage')) || [];
 
 export function cartMemory(){
   localStorage.setItem('cartStorage', JSON.stringify(carts));
 }
+
+
 export function cartUpdate(productId){
 const selectedQuantity = document.querySelector(`.js-quantity-selector-${productId}`);
 let productExist;
@@ -18,7 +22,7 @@ carts.forEach((cart) => {
       carts.push({
         productId,
         Quantity,
-        deliveryDateId: '2'
+        deliveryDateId: '1'
       })
     } else{
       productExist.Quantity += Quantity;
@@ -65,11 +69,16 @@ export function updateQuantity(saveId, newQuantity){
     cartMemory();
 }
 
-export function updateCartDelivery (cartId, deliveryId, deliveryDateTitle){
+export function updateCartDelivery (cartId, deliveryId){
    carts.forEach((cart) => {
     if(cart.productId === cartId){
         cart.deliveryDateId = deliveryId;
         return cart.deliveryDateId;
     }
   })
+}
+
+export function totalOrder(shipping, totalPrice){
+  let total = (totalPrice + shipping) + ((totalPrice + shipping)* 0.1);
+  return calculatePriceCents(total);
 }
